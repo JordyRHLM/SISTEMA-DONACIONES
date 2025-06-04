@@ -1,15 +1,12 @@
 package donaciones.repository;
 
+import donaciones.model.Organizacion;
+import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import donaciones.model.Organizacion;
-
-public interface OrganizacionRepository extends JpaRepository<Organizacion, Long>{
-    boolean existsByEmailContacto(String emailContacto);
-
-    boolean existsByNombre(String nombre);
-    boolean existsByTelefono(String telefono);
+public interface OrganizacionRepository extends JpaRepository<Organizacion, Long> {
     
+    boolean existsByNombre(String nombre);
+
+    Optional<Organizacion> findByNombre(String nombre);
 }

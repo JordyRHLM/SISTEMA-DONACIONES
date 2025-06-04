@@ -1,37 +1,50 @@
 package donaciones.controller;
 
-import donaciones.dto.CampaniaDTO;
-import donaciones.service.ICampaniaService;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import donaciones.dto.request.CampaniaRequest;
+import donaciones.dto.response.CampaniaResponse;
+import donaciones.service.CampaniaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
 
 @RestController
 @RequestMapping("/api/campanias")
 public class CampaniaController {
 
-    private final ICampaniaService campaniaService;
+    private final CampaniaService campaniaService;
 
-    @Autowired
-    public CampaniaController(ICampaniaService campaniaService) {
+    public CampaniaController(CampaniaService campaniaService) {
         this.campaniaService = campaniaService;
     }
 
     @GetMapping
-    public ResponseEntity<List<CampaniaDTO>> obtenerTodasLasCampanias() {
-        List<CampaniaDTO> campanias = campaniaService.obtenerTodasLasCampanias();
-        return ResponseEntity.ok(campanias);
+    public ResponseEntity<List<CampaniaResponse>> obtenerTodasLasCampanias() {
+        List<CampaniaResponse> responses = campaniaService.obtenerTodas();
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CampaniaResponse> obtenerCampaniaPorId(@PathVariable Long id) {
+        CampaniaResponse response = campaniaService.obtenerPorId(id);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
-    public ResponseEntity<CampaniaDTO> crearCampania(@RequestBody CampaniaDTO campaniaDTO) {
-        CampaniaDTO nuevaCampania = campaniaService.crearCampania(campaniaDTO);
-        return ResponseEntity.ok(nuevaCampania);
+    public ResponseEntity<CampaniaResponse> crearCampania(@RequestBody CampaniaRequest campaniaRequest) {
+        CampaniaResponse response = campaniaService.crearCampania(campaniaRequest);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CampaniaResponse> actualizarCampania(@PathVariable Long id, @RequestBody CampaniaRequest campaniaRequest) {
+        CampaniaResponse response = campaniaService.actualizarCampania(id, campaniaRequest);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarCampania(@PathVariable Long id) {
+        campaniaService.eliminarCampania(id);
+        return ResponseEntity.noContent().build();
     }
 }

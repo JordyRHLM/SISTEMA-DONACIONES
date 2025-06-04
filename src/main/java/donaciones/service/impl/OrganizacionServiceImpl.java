@@ -1,108 +1,121 @@
 package donaciones.service.impl;
 
-import java.util.List;
-import java.util.Optional;
+import donaciones.dto.request.OrganizacionRequest;
+import donaciones.dto.response.OrganizacionResponse;
+import donaciones.model.enums.EstadoOrganizacion;
+import donaciones.model.Organizacion;
+import donaciones.model.Usuario;
+import donaciones.repository.OrganizacionRepository;
+import donaciones.repository.UsuarioRepository;
+import donaciones.service.IOrganizacionService;
 
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import donaciones.dto.OrganizacionDTO;
-import donaciones.model.Organizacion;
-import donaciones.repository.OrganizacionRepository;
-import donaciones.service.IOrganizacionService;
-import donaciones.validation.OrganizacionValidator;
-
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class OrganizacionServiceImpl implements IOrganizacionService{
+@RequiredArgsConstructor
+public class OrganizacionServiceImpl implements IOrganizacionService {
 
-    private OrganizacionRepository organizacionRepository;
-    private OrganizacionValidator organizacionValidator;
+    private final OrganizacionRepository organizacionRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public OrganizacionServiceImpl(OrganizacionRepository organizacionRepository, OrganizacionValidator organizacionValidator) {
-        this.organizacionRepository = organizacionRepository;
-        this.organizacionValidator = organizacionValidator;
+    @Override
+    public List<OrganizacionResponse> listar() {
+        return organizacionRepository.findAll().stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<OrganizacionDTO> listarOrganizaciones() {
-        return organizacionRepository.findAll()
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-
-    }
-    
-    public OrganizacionDTO obtenerOrganizacionPorId(Long id_org) {
-        Organizacion org = organizacionRepository.findById(id_org)
-                .orElseThrow(() -> new RuntimeException("Organizacion no encontrada con id: " + id_org));
-        return convertToDTO(org);
+    public OrganizacionResponse obtenerPorId(Long id) {
+        Organizacion org = organizacionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Organización no encontrada"));
+        return mapToResponse(org);
     }
 
-    
-    public OrganizacionDTO crearOrganizacion(OrganizacionDTO organizacionDTO) {
-        organizacionValidator.completeValitationOrganizacion(organizacionDTO);
-
-        Organizacion organizacion = convertToEntity(organizacionDTO);
-        Organizacion orgSAve = organizacionRepository.save(organizacion);
-        return convertToDTO(orgSAve);
-    }
-
-    
-    public OrganizacionDTO actualizarOrganizacion(Long id_org, OrganizacionDTO organizacionDTO) {
-        Organizacion organizacionExistente = organizacionRepository.findById(id_org)
-                .orElseThrow(() -> new RuntimeException("Organizacion no encontrada con id: " + id_org));
-
-        organizacionExistente.setNombre(organizacionDTO.getNombre());
-        organizacionExistente.setDescripcion(organizacionDTO.getDescripcion());
-        organizacionExistente.setTelefono(organizacionDTO.getTelefono());
-        organizacionExistente.setEmailContacto(organizacionDTO.getEmailContacto());
-        organizacionExistente.setDireccion(organizacionDTO.getDireccion());
-        
-        Organizacion organizacionActualizada = organizacionRepository.save(organizacionExistente);
-        return convertToDTO(organizacionActualizada);
-    }
-
-    
-    public OrganizacionDTO eliminarOrganizacion(Long id_org) {
-        Organizacion organizacion = organizacionRepository.findById(id_org)
-                .orElseThrow(() -> new RuntimeException("Organizacion no encontrada con id: " + id_org));
-        organizacionRepository.delete(organizacion);
-        return convertToDTO(organizacion);
-    }
-
-    
-    public List<OrganizacionDTO> buscarOrganizacionesPorNombre(String nombre) {
-        if (nombre == null || nombre.isEmpty()) {
-            throw new IllegalArgumentException("El nombre de la organización no puede ser nulo o vacío");
+    @Override
+    public OrganizacionResponse crear(OrganizacionRequest request) {
+        if (organizacionRepository.existsByNombre(request.getNombre())) {
+            throw new IllegalArgumentException("Ya existe una organización con ese nombre");
         }
-        return organizacionRepository.findAll()
-                .stream()
-                .filter(org -> org.getNombre().equalsIgnoreCase(nombre))
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-    
-    private OrganizacionDTO convertToDTO(Organizacion organizacion) {
-        return OrganizacionDTO.builder()
-                .id_org(organizacion.getId_org())
-                .nombre(organizacion.getNombre())
-                .descripcion(organizacion.getDescripcion())
-                .telefono(organizacion.getTelefono())
-                .emailContacto(organizacion.getEmailContacto())
-                .direccion(organizacion.getDireccion())
+
+        Usuario owner = usuarioRepository.findById(request.getOwner_id()) // Cambiado a 'owner'
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+
+        Organizacion organizacion = Organizacion.builder()
+                .nombre(request.getNombre())
+                .descripcion(request.getDescripcion())
+                .estado(EstadoOrganizacion.valueOf(request.getEstado()))
+                .owner(owner) // CORREGIDO: Usar 'owner' en lugar de 'usuario'
                 .build();
+
+        return mapToResponse(organizacionRepository.save(organizacion));
     }
 
-    private Organizacion convertToEntity(OrganizacionDTO organizacionDTO) {
-        return Organizacion.builder()
-                .id_org(organizacionDTO.getId_org())
-                .nombre(organizacionDTO.getNombre())
-                .descripcion(organizacionDTO.getDescripcion())
-                .telefono(organizacionDTO.getTelefono())
-                .emailContacto(organizacionDTO.getEmailContacto())
-                .direccion(organizacionDTO.getDireccion())
-                .build();
+    @Override
+    public OrganizacionResponse actualizar(Long id, OrganizacionRequest request) {
+        Organizacion org = organizacionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Organización no encontrada"));
+
+        Usuario owner = usuarioRepository.findById(request.getOwner_id()) // Cambiado a 'owner'
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+
+        org.setNombre(request.getNombre());
+        org.setDescripcion(request.getDescripcion());
+        org.setEstado(EstadoOrganizacion.valueOf(request.getEstado()));
+        org.setOwner(owner); // CORREGIDO: Usar setOwner()
+
+        return mapToResponse(organizacionRepository.save(org));
     }
-    
+
+    @Override
+    public void eliminar(Long id) {
+        if (!organizacionRepository.existsById(id)) {
+            throw new EntityNotFoundException("Organización no encontrada");
+        }
+        organizacionRepository.deleteById(id);
+    }
+
+    @Override
+    public OrganizacionResponse darBaja(Long id) {
+        Organizacion org = organizacionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Organización no encontrada"));
+
+        // Aquí debes decidir a qué estado de tu enum EstadoOrganizacion quieres cambiar
+        // al dar de baja. Basado en tu script SQL, no hay un estado "INACTIVA",
+        // pero sí "RECHAZADA". Si quieres un estado específico para "baja", debes
+        // agregarlo al enum y la BD. Por ahora, voy a usar "RECHAZADA" como ejemplo
+        // o si prefieres, puedes cambiarlo a "APROBADA" o "PENDIENTE" si tienen sentido.
+        // Si no tienes un estado INACTIVA en tu enum, esto generará un error.
+        // Lo ideal sería que EstadoOrganizacion tenga los estados que realmente manejas.
+        org.setEstado(EstadoOrganizacion.RECHAZADA); // O EstadoOrganizacion.INACTIVA si lo agregas al enum
+        return mapToResponse(organizacionRepository.save(org));
+    }
+
+    @Override
+    public OrganizacionResponse activar(Long id) {
+        Organizacion org = organizacionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Organización no encontrada"));
+
+        // Similar al caso anterior, si no tienes un estado "ACTIVA" en tu enum,
+        // esto generará un error. Usa un estado válido de tu enum.
+        org.setEstado(EstadoOrganizacion.APROBADA); // O EstadoOrganizacion.ACTIVA si lo agregas al enum
+        return mapToResponse(organizacionRepository.save(org));
+    }
+
+    // ---------------------
+    private OrganizacionResponse mapToResponse(Organizacion org) {
+        return new OrganizacionResponse(
+                org.getId(),
+                org.getNombre(),
+                org.getDescripcion(),
+                org.getEstado().name(),
+                org.getOwner().getId(), // CORREGIDO: Acceder a owner y luego a su ID
+                org.getCreatedAt() // CORREGIDO: Usar getCreatedAt()
+        );
+    }
 }

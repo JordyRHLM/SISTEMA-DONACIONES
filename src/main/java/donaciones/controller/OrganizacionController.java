@@ -1,66 +1,69 @@
 package donaciones.controller;
 
-import donaciones.dto.OrganizacionDTO;
+import donaciones.dto.request.OrganizacionRequest;
+import donaciones.dto.response.OrganizacionResponse;
 import donaciones.service.IOrganizacionService;
+
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-
 import java.util.List;
 
+
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/organizaciones")
-@CrossOrigin(origins = "*") // Permitir CORS desde cualquier origen
+@RequiredArgsConstructor
 public class OrganizacionController {
 
-    @Autowired
-    private IOrganizacionService organizacionService;
+    private final IOrganizacionService organizacionService;
 
-    // GET: Listar todas las organizaciones
+    //  Listar todas las organizaciones
     @GetMapping
-    public ResponseEntity<List<OrganizacionDTO>> listarOrganizaciones() {
-        return ResponseEntity.ok(organizacionService.listarOrganizaciones());
+    public ResponseEntity<List<OrganizacionResponse>> listarOrganizaciones() {
+        return ResponseEntity.ok(organizacionService.listar());
     }
 
-    // GET: Obtener una organización por ID
+    //  Obtener una organización por ID
     @GetMapping("/{id}")
-    public ResponseEntity<OrganizacionDTO> obtenerOrganizacionPorId(@PathVariable("id") Long id) {
-        OrganizacionDTO organizacion = organizacionService.obtenerOrganizacionPorId(id);
-        return ResponseEntity.ok(organizacion);
+    public ResponseEntity<OrganizacionResponse> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(organizacionService.obtenerPorId(id));
     }
 
-    // POST: Crear una nueva organización
+    //  Crear nueva organización
     @PostMapping
-    public ResponseEntity<OrganizacionDTO> crearOrganizacion(@Valid @RequestBody OrganizacionDTO organizacionDTO) {
-        OrganizacionDTO nuevaOrganizacion = organizacionService.crearOrganizacion(organizacionDTO);
-        return ResponseEntity.ok(nuevaOrganizacion);
+    public ResponseEntity<OrganizacionResponse> crearOrganizacion(
+            @Valid @RequestBody OrganizacionRequest request) {
+        return ResponseEntity.ok(organizacionService.crear(request));
     }
 
-    // PUT: Actualizar una organización existente
+    //  Actualizar organización
     @PutMapping("/{id}")
-    public ResponseEntity<OrganizacionDTO> actualizarOrganizacion(
-            @PathVariable("id") Long id,
-            @Valid @RequestBody OrganizacionDTO organizacionDTO) {
-        OrganizacionDTO actualizada = organizacionService.actualizarOrganizacion(id, organizacionDTO);
-        return ResponseEntity.ok(actualizada);
+    public ResponseEntity<OrganizacionResponse> actualizarOrganizacion(
+            @PathVariable Long id,
+            @Valid @RequestBody OrganizacionRequest request) {
+        return ResponseEntity.ok(organizacionService.actualizar(id, request));
     }
 
-    // DELETE: Eliminar una organización por ID
+    //  Eliminar organización (borrado físico)
     @DeleteMapping("/{id}")
-    public ResponseEntity<OrganizacionDTO> eliminarOrganizacion(@PathVariable("id") Long id) {
-        OrganizacionDTO eliminada = organizacionService.eliminarOrganizacion(id);
-        return ResponseEntity.ok(eliminada);
+    public ResponseEntity<Void> eliminarOrganizacion(@PathVariable Long id) {
+        organizacionService.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
 
-    // GET: Buscar organizaciones por nombre
-    @GetMapping("/buscar")
-    public ResponseEntity<List<OrganizacionDTO>> buscarPorNombre(@RequestParam("nombre") String nombre) {
-        return ResponseEntity.ok(organizacionService.buscarOrganizacionesPorNombre(nombre));
+    //  Dar de baja (cambiar estado a INACTIVA)
+    @PatchMapping("/{id}/baja")
+    public ResponseEntity<OrganizacionResponse> darBaja(@PathVariable Long id) {
+        return ResponseEntity.ok(organizacionService.darBaja(id));
+    }
+
+    //  Activar organización (cambiar estado a ACTIVA)
+    @PatchMapping("/{id}/activar")
+    public ResponseEntity<OrganizacionResponse> activar(@PathVariable Long id) {
+        return ResponseEntity.ok(organizacionService.activar(id));
     }
 }

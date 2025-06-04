@@ -1,45 +1,44 @@
 package donaciones.model;
 
-import jakarta.annotation.Generated;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
+import donaciones.model.enums.EstadoOrganizacion;
+import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
 @Entity
-@Table(name = "organizacion")
+@Table(name = "organizaciones")
 public class Organizacion {
 
     @Id
-    @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_org;
+    private Long id;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 100)
     private String nombre;
 
-    @Column(nullable = false, length = 100)
+    @Column(columnDefinition = "TEXT")
     private String descripcion;
 
-    @Column(nullable = false, length = 15)
-    private String telefono;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EstadoOrganizacion estado = EstadoOrganizacion.PENDIENTE;
 
-    @Column(name="email_contacto", nullable = false, length = 50)
-    private String emailContacto;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private Usuario owner; // Nombre de campo es 'owner' para coincidir con mappedBy en Usuario
 
-    @Column(nullable = false, length = 100)
-    private String direccion;    
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }

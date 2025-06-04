@@ -1,19 +1,23 @@
 package donaciones.service;
 
+import donaciones.dto.request.OrganizacionRequest;
+import donaciones.dto.response.OrganizacionResponse;
+
 import java.util.List;
-import donaciones.dto.OrganizacionDTO;
 
-public interface IOrganizacionService{
+public interface IOrganizacionService {
 
-    List<OrganizacionDTO> listarOrganizaciones();
-    
-    OrganizacionDTO obtenerOrganizacionPorId(Long id_org);
-    
-    OrganizacionDTO crearOrganizacion(OrganizacionDTO organizacionDTO);
-    
-    OrganizacionDTO actualizarOrganizacion(Long id_org, OrganizacionDTO organizacionDTO);
-    
-    OrganizacionDTO eliminarOrganizacion(Long id_org);
+    List<OrganizacionResponse> listar();
 
-    List<OrganizacionDTO> buscarOrganizacionesPorNombre(String nombre);
+    OrganizacionResponse obtenerPorId(Long id);
+
+    OrganizacionResponse crear(OrganizacionRequest request);
+
+    OrganizacionResponse actualizar(Long id, OrganizacionRequest request);
+
+    void eliminar(Long id);
+
+    OrganizacionResponse darBaja(Long id); // cambia a INACTIVA
+
+    OrganizacionResponse activar(Long id); // cambia a ACTIVA
 }

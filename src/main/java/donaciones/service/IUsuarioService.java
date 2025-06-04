@@ -1,12 +1,14 @@
 package donaciones.service;
 
-import donaciones.dto.UsuarioDTO;
+import donaciones.dto.response.UsuarioResponse;
+import donaciones.model.Usuario;
+
 import java.util.List;
 
 public interface IUsuarioService {
-    UsuarioDTO crearUsuario(UsuarioDTO usuarioDTO);
-    UsuarioDTO obtenerUsuarioPorId(Long id);
-    List<UsuarioDTO> listarUsuarios();
-    UsuarioDTO actualizarUsuario(Long id, UsuarioDTO usuarioDTO);
-    void eliminarUsuario(Long id);
+    UsuarioResponse getUsuarioById(Long id);
+    UsuarioResponse getCurrentUsuario();
+    List<UsuarioResponse> getAllUsuarios();
+    void deleteUsuario(Long id);
+    Usuario getUsuarioEntity(Long id);
 }
