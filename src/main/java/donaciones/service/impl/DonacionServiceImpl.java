@@ -91,6 +91,77 @@ public class DonacionServiceImpl implements DonacionService {
         response.setCampaniaId(donacion.getCampania().getId());
         response.setOrganizacionId(donacion.getOrganizacion().getId());
         response.setEstado(donacion.getEstado());
+        response.setIsAnonima(donacion.getIsAnonima());
+        response.setCreatedAt(donacion.getCreatedAt());
         return response;
+    }
+    @Override
+    // listar donaciones por organizacion
+    public List<DonacionResponse> listarDonacionesPorOrganizacion(Long organizacionId, String estado) {
+        List<Donacion> donaciones = donacionRepository.findByOrganizacionIdAndEstado(organizacionId, estado);
+        return donaciones.stream()
+                .map(this::mapToDonacionResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public DonacionResponse editarDonacionPorId(Long id, Long organizacionId, DonacionRequest request) {
+        Donacion donacion = donacionRepository.findByIdAndOrganizacionId(id, organizacionId);
+        if (donacion == null) {
+            throw new RecursoNoEncontradoException("Donación no encontrada");
+        }
+
+        donacion.setTipo(request.getTipo());
+        donacion.setMonto(request.getMonto());
+        donacion.setItems(request.getItems());
+
+        Donacion updatedDonacion = donacionRepository.save(donacion);
+        return mapToDonacionResponse(updatedDonacion);
+    }
+
+    @Override
+    @Transactional
+    public List<DonacionResponse> asignarCampaniaADonacion(Long campaniaId, Long organizacionId) {
+        List<Donacion> donaciones = donacionRepository.findByCampaniaIdAndOrganizacionId(campaniaId, organizacionId);
+        return donaciones.stream()
+                .map(this::mapToDonacionResponse)
+                .collect(Collectors.toList());
+    }
+    // eliminar donacion por id
+    @Override
+    public void eliminarDonacionPorId(Long id) {
+        donacionRepository.deleteById(id);
+    }
+    @Override
+    // listar todas las donaciones
+    public List<DonacionResponse> listarTodasLasDonaciones() {
+        return donacionRepository.findAll().stream()
+                .map(this::mapToDonacionResponse)
+                .collect(Collectors.toList());
+    }
+    @Override
+    @Transactional
+    public DonacionResponse crearDonacion(DonacionRequest request) {
+        Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
+
+        Campania campania = campaniaRepository.findById(request.getCampaniaId())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Campaña no encontrada"));
+
+        Organizacion organizacion = organizacionRepository.findById(request.getOrganizacionId())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Organización no encontrada"));
+
+        Donacion donacion = new Donacion();
+        donacion.setTipo(request.getTipo());
+        donacion.setMonto(request.getMonto());
+        donacion.setItems(request.getItems());
+        donacion.setUsuario(usuario);
+        donacion.setCampania(campania);
+        donacion.setOrganizacion(organizacion);
+        donacion.setEstado(DonacionEstado.PENDIENTE);
+
+        Donacion savedDonacion = donacionRepository.save(donacion);
+        return mapToDonacionResponse(savedDonacion);
     }
 }

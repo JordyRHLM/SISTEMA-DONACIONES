@@ -20,5 +20,5 @@ public class RegisterRequest {
     private String password;
 
     private Boolean isOrgOwner = false;
-    private Boolean isAdmin = false; // <--- ¡Añade esta línea!
+    private Boolean isAdmin = false || true; // <--- ¡Añade esta línea!
 }

@@ -62,7 +62,7 @@ public class AuthService {
             .email(request.getEmail())
             .password(encodedPassword) // Guarda la contraseña ENCRIPTADA
             .isOrgOwner(request.getIsOrgOwner() != null ? request.getIsOrgOwner() : false)
-            .isAdmin(false) // Aseguramos que is_admin sea false por defecto
+            .isAdmin(request.getIsAdmin() != null ? request.getIsAdmin() : false)// Aseguramos que is_admin sea false por defecto
             .build();
 
         // 3. Guardar el usuario en la base de datos

@@ -37,7 +37,6 @@ public class Usuario {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    // MappedBy ahora apunta al campo 'owner' en la clase Organizacion
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Organizacion> organizaciones;
 
@@ -48,4 +47,5 @@ public class Usuario {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
+    
 }

@@ -1,6 +1,8 @@
 package donaciones.controller;
 
 import donaciones.dto.response.UsuarioResponse;
+import donaciones.dto.request.RegisterRequest;
+
 import donaciones.service.IUsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,20 @@ public class UsuarioController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UsuarioResponse>> getAllUsuarios() {
         return ResponseEntity.ok(usuarioService.getAllUsuarios());
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UsuarioResponse> createUsuario(@RequestBody RegisterRequest request) {
+        return ResponseEntity.ok(usuarioService.createUsuario(request));
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UsuarioResponse> updateUsuario(
+            @PathVariable Long id,
+            @RequestBody RegisterRequest request) {
+        return ResponseEntity.ok(usuarioService.updateUsuario(id, request));
     }
 
     @DeleteMapping("/{id}")

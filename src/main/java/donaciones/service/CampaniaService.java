@@ -1,6 +1,7 @@
 package donaciones.service;
 
 import donaciones.dto.request.CampaniaRequest;
+import donaciones.dto.response.CampaniaRecaudacionResponse;
 import donaciones.dto.response.CampaniaResponse;
 import donaciones.model.enums.CampaniaEstado;
 import java.util.List;
@@ -13,4 +14,6 @@ public interface CampaniaService {
     CampaniaResponse actualizarCampania(Long id, CampaniaRequest campaniaRequest);
     void cambiarEstado(Long id, CampaniaEstado estado);
     void eliminarCampania(Long id);
+
+    CampaniaRecaudacionResponse calcularRecaudacion(Long campaniaId);
 }

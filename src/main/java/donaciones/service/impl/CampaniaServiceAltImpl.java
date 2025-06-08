@@ -1,13 +1,18 @@
 package donaciones.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import donaciones.dto.request.CampaniaRequest;
+import donaciones.dto.response.CampaniaRecaudacionResponse;
 import donaciones.dto.response.CampaniaResponse;
 import donaciones.exception.RecursoNoEncontradoException;
 import donaciones.model.Campania;
+import donaciones.model.Donacion;
 import donaciones.model.Organizacion;
+import donaciones.model.enums.DonacionEstado;
 import donaciones.repository.CampaniaRepository;
+import donaciones.repository.DonacionRepository;
 import donaciones.repository.OrganizacionRepository;
 import donaciones.service.CampaniaService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +21,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,6 +37,7 @@ public class CampaniaServiceAltImpl implements CampaniaService {
     private final CampaniaRepository campaniaRepository;
     private final OrganizacionRepository organizacionRepository;
     private final ObjectMapper objectMapper;
+    private final DonacionRepository donacionRepository;
 
     @Override
     @Transactional
@@ -158,5 +167,74 @@ public class CampaniaServiceAltImpl implements CampaniaService {
                 // .estado eliminado
                 .createdAt(campania.getCreatedAt())
                 .build();
+    }
+
+    //--> CRICKO CALCULAR RECAUDACION
+    public CampaniaRecaudacionResponse calcularRecaudacion(Long campaniaId) {
+        Campania campania = campaniaRepository.findById(campaniaId)
+            .orElseThrow(() -> new RuntimeException("Campaña no encontrada"));
+
+        List<Donacion> donaciones = donacionRepository.findByCampaniaIdAndEstadoIn(
+            campaniaId, List.of(DonacionEstado.CONFIRMADA, DonacionEstado.ENTREGADA)
+        );
+
+
+        double totalRecaudado = donaciones.stream()
+            .filter(d -> d.getMonto() != null)
+            .mapToDouble(Donacion::getMonto)
+            .sum();
+
+        BigDecimal totalRecaudadoBD = BigDecimal.valueOf(totalRecaudado);
+        BigDecimal meta = campania.getMetaMonetaria() != null ? campania.getMetaMonetaria() : BigDecimal.ZERO;
+
+        double porcentajeMonetario = meta.compareTo(BigDecimal.ZERO) > 0
+            ? totalRecaudadoBD.divide(meta, 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).doubleValue()
+            : 0;
+
+        Map<String, Double> acumuladoItems = new HashMap<>();
+        for (Donacion d : donaciones) {
+            if (d.getItems() != null) {
+                try {
+                    Map<String, String> items = new ObjectMapper().readValue(d.getItems(), new TypeReference<>() {});
+                    for (Map.Entry<String, String> entry : items.entrySet()) {
+                        String item = entry.getKey();
+                        double cantidad = extraerCantidad(entry.getValue());
+                        acumuladoItems.merge(item, cantidad, Double::sum);
+                    }
+                } catch (Exception e) {
+                    // Manejo de errores de parseo opcional
+                }
+            }
+        }
+
+        Map<String, Double> porcentajeItems = new HashMap<>();
+        Map<String, Object> metaItemsMap = campania.getMetaItemsMap();
+        if (metaItemsMap != null) {
+            for (Map.Entry<String, Object> entry : metaItemsMap.entrySet()) {
+                String item = entry.getKey();
+                double metaItemCantidad = extraerCantidad(entry.getValue().toString());
+                double recaudado = acumuladoItems.getOrDefault(item, 0.0);
+                double porcentaje = metaItemCantidad > 0 ? (recaudado / metaItemCantidad) * 100 : 0;
+                porcentajeItems.put(item, porcentaje);
+            }
+        }
+
+        CampaniaRecaudacionResponse response = new CampaniaRecaudacionResponse();
+        response.setTotalRecaudado(totalRecaudadoBD);
+        response.setMetaMonetaria(meta);
+        response.setPorcentajeRecaudadoMonetario(porcentajeMonetario);
+        response.setItemsRecaudados(acumuladoItems); // <--- este es el nuevo campo
+        
+
+        return response;
+    }
+
+    private double extraerCantidad(String valor) {
+        try {
+            String numero = valor.replaceAll("[^0-9.]", "");
+            return Double.parseDouble(numero);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }

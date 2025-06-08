@@ -1,6 +1,7 @@
 package donaciones.controller;
 
 import donaciones.dto.request.CampaniaRequest;
+import donaciones.dto.response.CampaniaRecaudacionResponse;
 import donaciones.dto.response.CampaniaResponse;
 import donaciones.service.CampaniaService;
 import org.springframework.http.ResponseEntity;
@@ -46,5 +47,11 @@ public class CampaniaController {
     public ResponseEntity<Void> eliminarCampania(@PathVariable Long id) {
         campaniaService.eliminarCampania(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/recaudacion")
+    public ResponseEntity<CampaniaRecaudacionResponse> obtenerRecaudacion(@PathVariable Long id) {
+        CampaniaRecaudacionResponse response = campaniaService.calcularRecaudacion(id);
+        return ResponseEntity.ok(response);
     }
 }
