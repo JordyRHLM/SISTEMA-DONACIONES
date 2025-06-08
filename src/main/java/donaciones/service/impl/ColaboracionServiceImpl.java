@@ -105,4 +105,33 @@ public class ColaboracionServiceImpl implements ColaboracionService {
         response.setFechaColaboracion(colaboracion.getCreatedAt());
         return response;
     }
+    @Override
+    public List<ColaboracionResponse> listarTodas() {
+        return colaboracionRepository.findAll().stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public ColaboracionResponse actualizarColaboracion(Long usuarioId, Long campaniaId, RolColaboracion nuevoRol) {
+        // Verificar que la colaboración existe
+        Colaboracion colaboracion = colaboracionRepository.findByUsuarioIdAndCampaniaId(usuarioId, campaniaId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Colaboración no encontrada"));
+        
+        // Validar que el nuevo rol no sea nulo
+        if(nuevoRol == null) {
+            throw new ValidacionException("El rol no puede ser nulo");
+        }
+        
+        // Actualizar el rol
+        colaboracionRepository.actualizarRol(usuarioId, campaniaId, nuevoRol);
+        
+        // Obtener la colaboración actualizada para devolverla
+        Colaboracion actualizada = colaboracionRepository.findByUsuarioIdAndCampaniaId(usuarioId, campaniaId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Error al recuperar la colaboración actualizada"));
+        
+        return mapToResponse(actualizada);
+    }
+
 }

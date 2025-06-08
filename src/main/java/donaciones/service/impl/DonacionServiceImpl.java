@@ -140,28 +140,5 @@ public class DonacionServiceImpl implements DonacionService {
                 .map(this::mapToDonacionResponse)
                 .collect(Collectors.toList());
     }
-    @Override
-    @Transactional
-    public DonacionResponse crearDonacion(DonacionRequest request) {
-        Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
-                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
-
-        Campania campania = campaniaRepository.findById(request.getCampaniaId())
-                .orElseThrow(() -> new RecursoNoEncontradoException("Campaña no encontrada"));
-
-        Organizacion organizacion = organizacionRepository.findById(request.getOrganizacionId())
-                .orElseThrow(() -> new RecursoNoEncontradoException("Organización no encontrada"));
-
-        Donacion donacion = new Donacion();
-        donacion.setTipo(request.getTipo());
-        donacion.setMonto(request.getMonto());
-        donacion.setItems(request.getItems());
-        donacion.setUsuario(usuario);
-        donacion.setCampania(campania);
-        donacion.setOrganizacion(organizacion);
-        donacion.setEstado(DonacionEstado.PENDIENTE);
-
-        Donacion savedDonacion = donacionRepository.save(donacion);
-        return mapToDonacionResponse(savedDonacion);
-    }
+    
 }

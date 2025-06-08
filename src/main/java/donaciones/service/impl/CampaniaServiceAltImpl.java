@@ -168,8 +168,7 @@ public class CampaniaServiceAltImpl implements CampaniaService {
                 .createdAt(campania.getCreatedAt())
                 .build();
     }
-
-    //--> CRICKO CALCULAR RECAUDACION
+     //--> CRICKO CALCULAR RECAUDACION
     public CampaniaRecaudacionResponse calcularRecaudacion(Long campaniaId) {
         Campania campania = campaniaRepository.findById(campaniaId)
             .orElseThrow(() -> new RuntimeException("Campaña no encontrada"));

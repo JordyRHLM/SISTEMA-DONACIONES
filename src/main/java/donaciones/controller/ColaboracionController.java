@@ -16,8 +16,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-// Import the ValidacionException class (update the package if needed)
 import donaciones.exception.ValidacionException;
+import donaciones.model.enums.RolColaboracion;
 
 @RestController
 @RequestMapping("/api/colaboraciones")
@@ -51,6 +51,23 @@ public class ColaboracionController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Listar todas las colaboraciones")
+    @GetMapping("/todas")
+    public ResponseEntity<List<ColaboracionResponse>> listarTodas() {
+        List<ColaboracionResponse> response = colaboracionService.listarTodas();
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Actualizar colaboración")
+    @PutMapping
+    public ResponseEntity<ColaboracionResponse> actualizarColaboracion(
+            @RequestParam Long usuarioId,
+            @RequestParam Long campaniaId,
+            @RequestParam RolColaboracion rol) {
+        ColaboracionResponse response = colaboracionService.actualizarColaboracion(usuarioId, campaniaId, rol);
+        return ResponseEntity.ok(response);
+    }
+
     @Operation(summary = "Eliminar colaboración")
     @DeleteMapping
     public ResponseEntity<Void> eliminarColaboracion(
@@ -59,9 +76,9 @@ public class ColaboracionController {
         colaboracionService.eliminarColaboracion(usuarioId, campaniaId);
         return ResponseEntity.noContent().build();
     }
-    // En ColaboracionController.java
-@ExceptionHandler(ValidacionException.class)
-public ResponseEntity<String> handleValidacionException(ValidacionException ex) {
-    return ResponseEntity.badRequest().body(ex.getMessage());
-}
+
+    @ExceptionHandler(ValidacionException.class)
+    public ResponseEntity<String> handleValidacionException(ValidacionException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
 }

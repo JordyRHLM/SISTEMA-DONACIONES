@@ -8,6 +8,7 @@ import donaciones.model.Organizacion;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "donaciones")
@@ -42,4 +43,8 @@ public class Donacion {
     
     @Enumerated(EnumType.STRING)
     private DonacionEstado estado = DonacionEstado.PENDIENTE;
+
+    private Boolean isAnonima = false; // Indica si la donación es anónima
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
