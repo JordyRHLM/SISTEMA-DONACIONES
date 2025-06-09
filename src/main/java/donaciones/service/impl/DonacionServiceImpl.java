@@ -4,7 +4,6 @@ import donaciones.dto.request.DonacionRequest;
 import donaciones.dto.response.DonacionResponse;
 import donaciones.exception.RecursoNoEncontradoException;
 import donaciones.model.*;
-import donaciones.model.Donacion;
 import donaciones.model.enums.DonacionEstado;
 import donaciones.repository.*;
 import donaciones.service.DonacionService;
@@ -96,9 +95,14 @@ public class DonacionServiceImpl implements DonacionService {
         return response;
     }
     @Override
-    // listar donaciones por organizacion
     public List<DonacionResponse> listarDonacionesPorOrganizacion(Long organizacionId, String estado) {
-        List<Donacion> donaciones = donacionRepository.findByOrganizacionIdAndEstado(organizacionId, estado);
+        List<Donacion> donaciones;
+        if (estado == null || estado.isEmpty()) {
+            donaciones = donacionRepository.findByOrganizacionId(organizacionId);
+        } else {
+            DonacionEstado estadoEnum = DonacionEstado.valueOf(estado.toUpperCase());
+            donaciones = donacionRepository.findByOrganizacionIdAndEstado(organizacionId, estadoEnum);
+        }
         return donaciones.stream()
                 .map(this::mapToDonacionResponse)
                 .collect(Collectors.toList());

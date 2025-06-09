@@ -63,6 +63,11 @@ public class Campania {
 
     // Métodos auxiliares para manejar metaItems como Map
 
+    private void asignarMetaItems(Campania campania, Map<String, Object> metaItems) {
+        campania.setMetaItemsMap(metaItems);
+    }
+
+
     public void setMetaItemsMap(Map<String, Object> metaItemsMap) {
         try {
             this.metaItems = new ObjectMapper().writeValueAsString(metaItemsMap);

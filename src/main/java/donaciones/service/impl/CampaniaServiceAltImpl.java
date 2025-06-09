@@ -10,6 +10,7 @@ import donaciones.exception.RecursoNoEncontradoException;
 import donaciones.model.Campania;
 import donaciones.model.Donacion;
 import donaciones.model.Organizacion;
+import donaciones.model.enums.CampaniaEstado;
 import donaciones.model.enums.DonacionEstado;
 import donaciones.repository.CampaniaRepository;
 import donaciones.repository.DonacionRepository;
@@ -48,10 +49,11 @@ public class CampaniaServiceAltImpl implements CampaniaService {
         Campania campania = Campania.builder()
                 .titulo(request.getTitulo())
                 .descripcion(request.getDescripcion())
-                .organizacion(organizacion)
+                .organizacion(organizacion) 
                 .fechaInicio(request.getFechaInicio())
                 .fechaFin(request.getFechaFin())
                 .metaMonetaria(request.getMetaMonetaria())
+                .estado(CampaniaEstado.ACTIVA) // O el estado inicial que desees
                 .build();
 
         asignarMetaItems(campania, request.getMetaItems());
