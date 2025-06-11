@@ -12,6 +12,7 @@ import donaciones.service.IOrganizacionService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import donaciones.repository.CampaniaRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +24,7 @@ public class OrganizacionServiceImpl implements IOrganizacionService {
 
     private final OrganizacionRepository organizacionRepository;
     private final UsuarioRepository usuarioRepository;
+    private final CampaniaRepository campaniaRepository;
 
     @Override
     public List<OrganizacionResponse> listar() {
@@ -145,6 +147,18 @@ public class OrganizacionServiceImpl implements IOrganizacionService {
                 org.getCreatedAt()
             ))
             .toList();
+    }
+
+    @Override
+    public List<?> obtenerCampanasPorOrganizacion(Long organizacionId) {
+        if (!organizacionRepository.existsById(organizacionId)) {
+            throw new EntityNotFoundException("Organización no encontrada");
+        }
+        // Suponiendo que tienes un método en el repositorio de campaña:
+        // List<Campana> findByOrganizacionId(Long organizacionId);
+        // Si tienes CampanaRepository, deberías inyectarlo como dependencia.
+        // Aquí se asume que existe campanaRepository.
+        return campaniaRepository.findByOrganizacionId(organizacionId);
     }
 
 

@@ -15,4 +15,6 @@ public interface CampaniaRepository extends JpaRepository<Campania, Long> {
 //Dashboard
 long countByEstado(CampaniaEstado estado);
     long countDistinctOrganizacionByEstado(CampaniaEstado estado);
+
+    List<Campania> findAllByOrganizacionId(Long organizacionId);
 }
