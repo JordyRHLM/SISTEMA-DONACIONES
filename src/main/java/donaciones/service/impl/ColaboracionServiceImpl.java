@@ -139,4 +139,11 @@ public class ColaboracionServiceImpl implements ColaboracionService {
         return colaboracionRepository.count();
     }
 
+    @Override
+    public List<ColaboracionResponse> listarPorOrganizacion(Long organizacionId) {
+        return colaboracionRepository.findByCampaniaOrganizacionId(organizacionId).stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
 }

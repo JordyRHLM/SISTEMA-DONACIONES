@@ -39,4 +39,6 @@ public interface ColaboracionRepository extends JpaRepository<Colaboracion, Cola
                       @Param("rol") RolColaboracion rol);
     //dashboard
     long count();
+
+    List<Colaboracion> findByCampaniaOrganizacionId(Long organizacionId);
  }

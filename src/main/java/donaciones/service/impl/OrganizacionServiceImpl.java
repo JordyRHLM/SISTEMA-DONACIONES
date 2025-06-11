@@ -118,4 +118,11 @@ public class OrganizacionServiceImpl implements IOrganizacionService {
                 org.getCreatedAt() // CORREGIDO: Usar getCreatedAt()
         );
     }
+
+    @Override
+    public Long obtenerDueno(Long id) {
+        Organizacion org = organizacionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Organización no encontrada"));
+        return org.getOwner().getId();
+    }
 }

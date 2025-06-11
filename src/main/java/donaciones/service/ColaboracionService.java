@@ -16,4 +16,5 @@ public interface ColaboracionService {
     ColaboracionResponse actualizarColaboracion(Long usuarioId, Long campaniaId, RolColaboracion nuevoRol);
 //dashboard
     long countTotalVolunteers();
+    List<ColaboracionResponse> listarPorOrganizacion(Long organizacionId);
 }

@@ -10,6 +10,7 @@ import donaciones.service.IUsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import donaciones.repository.OrganizacionRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class UsuarioServiceImpl implements IUsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final OrganizacionRepository organizacionRepository;
 
     @Override
     public UsuarioResponse getUsuarioById(Long id) {
@@ -99,5 +101,17 @@ public class UsuarioServiceImpl implements IUsuarioService {
                 .isOrgOwner(usuario.getIsOrgOwner())
                 .createdAt(usuario.getCreatedAt())
                 .build();
+    }
+
+    @Override
+    public Long getOrganizacionIdIfOwner(Long userId) {
+        // Opción 1: Si solo necesitas el ID
+        return organizacionRepository.findIdByOwnerId(userId)
+                .orElse(null);
+                
+        // Opción 2: Si necesitas más datos de la organización
+        // return organizacionRepository.findByOwnerId(userId)
+        //         .map(Organizacion::getId)
+        //         .orElse(null);
     }
 }

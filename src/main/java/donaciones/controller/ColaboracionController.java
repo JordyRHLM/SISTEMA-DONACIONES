@@ -81,4 +81,12 @@ public class ColaboracionController {
     public ResponseEntity<String> handleValidacionException(ValidacionException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
+
+    @Operation(summary = "Obtener colaboraciones por organización")
+    @GetMapping("/organizacion/{organizacionId}")
+    public ResponseEntity<List<ColaboracionResponse>> listarPorOrganizacion(
+            @PathVariable Long organizacionId) {
+        List<ColaboracionResponse> response = colaboracionService.listarPorOrganizacion(organizacionId);
+        return ResponseEntity.ok(response);
+    }
 }

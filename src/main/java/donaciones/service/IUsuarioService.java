@@ -14,4 +14,5 @@ public interface IUsuarioService {
     List<UsuarioResponse> getAllUsuarios();
     void deleteUsuario(Long id);
     Usuario getUsuarioEntity(Long id);
+    Long getOrganizacionIdIfOwner(Long userId);
 }

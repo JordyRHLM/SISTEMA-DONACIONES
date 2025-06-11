@@ -20,4 +20,6 @@ public interface IOrganizacionService {
     OrganizacionResponse darBaja(Long id); // cambia a INACTIVA
 
     OrganizacionResponse activar(Long id); // cambia a ACTIVA
+
+    Long obtenerDueno(Long id);
 }

@@ -66,4 +66,11 @@ public class OrganizacionController {
     public ResponseEntity<OrganizacionResponse> activar(@PathVariable Long id) {
         return ResponseEntity.ok(organizacionService.activar(id));
     }
+
+    // obtener el id del dueño de la organización, no su nombre, id es long
+    @GetMapping("/{id}/dueno")
+    public ResponseEntity<Long> obtenerDueno(@PathVariable Long id) {
+        return ResponseEntity.ok(organizacionService.obtenerDueno(id));
+    }
+    
 }

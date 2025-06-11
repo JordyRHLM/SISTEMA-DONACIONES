@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -54,5 +55,13 @@ public class UsuarioController {
     public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
         usuarioService.deleteUsuario(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/organizacion")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
+    public ResponseEntity<Long> getOrganizacionIdIfOwner(@PathVariable Long id) {
+        return ResponseEntity.of(
+            Optional.ofNullable(usuarioService.getOrganizacionIdIfOwner(id))
+        );
     }
 }
