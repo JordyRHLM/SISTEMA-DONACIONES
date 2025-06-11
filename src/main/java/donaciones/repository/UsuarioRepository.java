@@ -1,9 +1,11 @@
 package donaciones.repository;
 
+import donaciones.dto.response.OrganizacionResponse;
 import donaciones.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository

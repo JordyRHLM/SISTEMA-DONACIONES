@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import donaciones.dto.response.OrganizacionResponse;
 @Service
 @RequiredArgsConstructor
 public class OrganizacionServiceImpl implements IOrganizacionService {
@@ -125,4 +126,26 @@ public class OrganizacionServiceImpl implements IOrganizacionService {
                 .orElseThrow(() -> new EntityNotFoundException("Organización no encontrada"));
         return org.getOwner().getId();
     }
+
+    @Override
+    public List<OrganizacionResponse> listarPorOwner(Long ownerId) {
+        if (!usuarioRepository.existsById(ownerId)) {
+            throw new RuntimeException("Usuario no encontrado con id: " + ownerId);
+        }
+
+        List<Organizacion> organizaciones = organizacionRepository.findByOwnerId(ownerId);
+
+        return organizaciones.stream()
+            .map(org -> new OrganizacionResponse(
+                org.getId(),
+                org.getNombre(),
+                org.getDescripcion(),
+                org.getEstado().name(),  // Asegúrate de que es un String
+                org.getOwner().getId(),
+                org.getCreatedAt()
+            ))
+            .toList();
+    }
+
+
 }

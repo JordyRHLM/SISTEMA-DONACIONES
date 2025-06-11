@@ -73,4 +73,10 @@ public class OrganizacionController {
         return ResponseEntity.ok(organizacionService.obtenerDueno(id));
     }
     
+
+    @GetMapping("/owner/{ownerId}")
+    public ResponseEntity<List<OrganizacionResponse>> listarPorOwner(@PathVariable Long ownerId) {
+        return ResponseEntity.ok(organizacionService.listarPorOwner(ownerId));
+    }
+
 }

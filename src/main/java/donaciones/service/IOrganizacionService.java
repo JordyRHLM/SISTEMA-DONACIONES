@@ -22,4 +22,7 @@ public interface IOrganizacionService {
     OrganizacionResponse activar(Long id); // cambia a ACTIVA
 
     Long obtenerDueno(Long id);
+
+    List<OrganizacionResponse> listarPorOwner(Long ownerId);
+
 }

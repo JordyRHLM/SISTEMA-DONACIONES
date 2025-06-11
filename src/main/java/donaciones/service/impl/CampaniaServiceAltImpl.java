@@ -166,7 +166,7 @@ public class CampaniaServiceAltImpl implements CampaniaService {
                 .fechaFin(campania.getFechaFin())
                 .metaMonetaria(campania.getMetaMonetaria())
                 .metaItems(campania.getMetaItems())
-                // .estado eliminado
+                .estado(campania.getEstado())
                 .createdAt(campania.getCreatedAt())
                 .build();
     }
