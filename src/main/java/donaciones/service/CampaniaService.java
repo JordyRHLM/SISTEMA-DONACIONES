@@ -18,4 +18,7 @@ public interface CampaniaService {
 //dashboard
     long countActiveCampaigns();
     long countOrganizationsWithActiveCampaigns();
+
+    List<CampaniaResponse> listarPorOrganizacion(Long organizacionId);
+
 }

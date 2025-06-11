@@ -19,7 +19,4 @@ public interface OrganizacionRepository extends JpaRepository<Organizacion, Long
 
     List<Organizacion> findByOwnerId(Long ownerId);
 
-    @Query("SELECT c FROM Campania c WHERE c.organizacion.id = :organizacionId")
-    List<?> findCampaniasByOrganizacionId(@Param("organizacionId") Long organizacionId);
-
 }

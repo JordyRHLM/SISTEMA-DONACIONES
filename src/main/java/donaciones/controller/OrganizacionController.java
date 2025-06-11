@@ -79,10 +79,4 @@ public class OrganizacionController {
         return ResponseEntity.ok(organizacionService.listarPorOwner(ownerId));
     }
 
-    // obtencion de campañas por organización
-    @GetMapping("/{id}/campanas")
-    public ResponseEntity<List<?>> obtenerCampanasPorOrganizacion(@PathVariable Long id) {
-        return ResponseEntity.ok(organizacionService.obtenerCampanasPorOrganizacion(id));
-    }
-
 }

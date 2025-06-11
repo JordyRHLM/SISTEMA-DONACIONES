@@ -25,6 +25,5 @@ public interface IOrganizacionService {
 
     List<OrganizacionResponse> listarPorOwner(Long ownerId);
 
-    List<?> obtenerCampanasPorOrganizacion(Long id);
 
 }

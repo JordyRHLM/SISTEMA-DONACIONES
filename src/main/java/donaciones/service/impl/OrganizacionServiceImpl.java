@@ -149,17 +149,5 @@ public class OrganizacionServiceImpl implements IOrganizacionService {
             .toList();
     }
 
-    @Override
-    public List<?> obtenerCampanasPorOrganizacion(Long organizacionId) {
-        if (!organizacionRepository.existsById(organizacionId)) {
-            throw new EntityNotFoundException("Organización no encontrada");
-        }
-        // Suponiendo que tienes un método en el repositorio de campaña:
-        // List<Campana> findByOrganizacionId(Long organizacionId);
-        // Si tienes CampanaRepository, deberías inyectarlo como dependencia.
-        // Aquí se asume que existe campanaRepository.
-        return campaniaRepository.findByOrganizacionId(organizacionId);
-    }
-
-
+    
 }

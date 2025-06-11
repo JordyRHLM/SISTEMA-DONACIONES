@@ -54,4 +54,10 @@ public class CampaniaController {
         CampaniaRecaudacionResponse response = campaniaService.calcularRecaudacion(id);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/organizacion/{organizacionId}")
+    public ResponseEntity<List<CampaniaResponse>> listarPorOrganizacion(@PathVariable Long organizacionId) {
+        return ResponseEntity.ok(campaniaService.listarPorOrganizacion(organizacionId));
+    }
+
 }

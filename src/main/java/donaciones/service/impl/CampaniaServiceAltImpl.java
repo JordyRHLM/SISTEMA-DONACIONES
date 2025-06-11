@@ -247,4 +247,31 @@ public class CampaniaServiceAltImpl implements CampaniaService {
     public long countOrganizationsWithActiveCampaigns() {
         return campaniaRepository.countDistinctOrganizacionByEstado(CampaniaEstado.ACTIVA);
     }
+
+    @Override
+    public List<CampaniaResponse> listarPorOrganizacion(Long organizacionId) {
+        if (!organizacionRepository.existsById(organizacionId)) {
+            throw new RuntimeException("Organización no encontrada");
+        }
+
+        List<Campania> campanias = campaniaRepository.findByOrganizacionId(organizacionId);
+
+        return campanias.stream()
+            .map(c -> CampaniaResponse.builder()
+                .id(c.getId())
+                .titulo(c.getTitulo())
+                .descripcion(c.getDescripcion())
+                .organizacionId(c.getOrganizacion().getId())
+                .organizacionNombre(c.getOrganizacion().getNombre())
+                .fechaInicio(c.getFechaInicio())
+                .fechaFin(c.getFechaFin())
+                .metaMonetaria(c.getMetaMonetaria())
+                .metaItems(c.getMetaItems()) // asumiendo que ya es un String JSON
+                .estado(c.getEstado())
+                .createdAt(c.getCreatedAt())
+                .build())
+            .toList();
+}
+
+
 }
