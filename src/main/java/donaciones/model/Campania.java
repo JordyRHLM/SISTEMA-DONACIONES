@@ -1,8 +1,11 @@
 package donaciones.model;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 import donaciones.model.enums.CampaniaEstado; // ¡Importa tu enum!
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "campanias")
@@ -47,7 +53,8 @@ public class Campania {
     @Column(name = "meta_monetaria", precision = 10, scale = 2)
     private BigDecimal metaMonetaria;
 
-    @Column(columnDefinition = "JSONB")
+    @Column(name="meta_items", columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String metaItems; // JSON como String
 
     // --- ¡AÑADE ESTA PROPIEDAD! ---
