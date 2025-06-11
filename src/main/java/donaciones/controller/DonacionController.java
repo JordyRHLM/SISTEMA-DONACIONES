@@ -98,4 +98,11 @@ public class DonacionController {
         List<DonacionResponse> donaciones = donacionService.asignarCampaniaADonacion(campaniaId, organizacionId);
         return ResponseEntity.ok(donaciones);
     }
+
+    //listar donaciones por organizacion
+    @GetMapping("/organizacion/{organizacionId}/donaciones")
+    public ResponseEntity<List<DonacionResponse>> listarDonacionesPorOrganizacion(@PathVariable Long organizacionId) {
+        List<DonacionResponse> donaciones = donacionService.listarDonacionesPorOrganizacion(organizacionId);
+        return ResponseEntity.ok(donaciones);
+    }
 }

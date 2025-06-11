@@ -21,4 +21,9 @@ public class OrganizacionResponse {
     private Long owner_id;
 
     private LocalDateTime createdAt; // CORREGIDO: Nombre de campo para consistencia con la entidad
+
+    // Datos del organizador (dueño)
+    private String organizadorNombre;  // Nombre del usuario con rol ORGANIZADOR
+    private Long organizadorId;
+    private String organizadorEmail; // Email del usuario con rol ORGANIZADOR
 }

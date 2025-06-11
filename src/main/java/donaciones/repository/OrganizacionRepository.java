@@ -19,4 +19,8 @@ public interface OrganizacionRepository extends JpaRepository<Organizacion, Long
 
     List<Organizacion> findByOwnerId(Long ownerId);
 
+    //obtener las donaciones asociadas a una organizacion
+    @Query("SELECT d FROM Donacion d WHERE d.organizacion.id = :organizacionId")
+    List<?> findDonacionesByOrganizacionId(@Param("organizacionId") Long organizacionId);   
+
 }

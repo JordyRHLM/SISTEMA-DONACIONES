@@ -112,15 +112,22 @@ public class OrganizacionServiceImpl implements IOrganizacionService {
 
     // ---------------------
     private OrganizacionResponse mapToResponse(Organizacion org) {
-        return new OrganizacionResponse(
-                org.getId(),
-                org.getNombre(),
-                org.getDescripcion(),
-                org.getEstado().name(),
-                org.getOwner().getId(), // CORREGIDO: Acceder a owner y luego a su ID
-                org.getCreatedAt() // CORREGIDO: Usar getCreatedAt()
-        );
+    OrganizacionResponse response = new OrganizacionResponse();
+    response.setId(org.getId());
+    response.setNombre(org.getNombre());
+    response.setDescripcion(org.getDescripcion());
+    response.setEstado(org.getEstado().name());
+    response.setCreatedAt(org.getCreatedAt());
+    
+    // Obtener el organizador (dueño) desde la relación
+    if (org.getOwner() != null) {
+        response.setOrganizadorId(org.getOwner().getId());
+        response.setOrganizadorNombre(org.getOwner().getNombre()); // Asume que Usuario tiene getName()
+        response.setOrganizadorEmail(org.getOwner().getEmail());
     }
+    
+    return response;
+}
 
     @Override
     public Long obtenerDueno(Long id) {
@@ -138,16 +145,29 @@ public class OrganizacionServiceImpl implements IOrganizacionService {
         List<Organizacion> organizaciones = organizacionRepository.findByOwnerId(ownerId);
 
         return organizaciones.stream()
-            .map(org -> new OrganizacionResponse(
-                org.getId(),
-                org.getNombre(),
-                org.getDescripcion(),
-                org.getEstado().name(),  // Asegúrate de que es un String
-                org.getOwner().getId(),
-                org.getCreatedAt()
-            ))
+            .map(org -> {
+                OrganizacionResponse response = new OrganizacionResponse();
+                response.setId(org.getId());
+                response.setNombre(org.getNombre());
+                response.setDescripcion(org.getDescripcion());
+                response.setEstado(org.getEstado().name());
+                response.setOrganizadorId(org.getOwner().getId());
+                response.setCreatedAt(org.getCreatedAt());
+                return response;
+            })
             .toList();
     }
 
+    //obtener las donaciones asociadas a una organizacion
+    @Override
+    public List<?> obtenerDonacionesPorOrganizacion(Long organizacionId) {
+        if (!organizacionRepository.existsById(organizacionId)) {
+            throw new EntityNotFoundException("Organización no encontrada");
+        }
+        // Suponiendo que tienes un método en el repositorio de donación:
+        // List<Donacion> findByOrganizacionId(Long organizacionId);
+        // Aquí se asume que existe donacionRepository.
+        return organizacionRepository.findDonacionesByOrganizacionId(organizacionId);
+    }
     
 }

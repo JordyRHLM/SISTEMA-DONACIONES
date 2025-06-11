@@ -31,7 +31,6 @@ public class UsuarioController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UsuarioResponse>> getAllUsuarios() {
         return ResponseEntity.ok(usuarioService.getAllUsuarios());
     }
@@ -43,7 +42,6 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UsuarioResponse> updateUsuario(
             @PathVariable Long id,
             @RequestBody RegisterRequest request) {
@@ -58,7 +56,6 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}/organizacion")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
     public ResponseEntity<Long> getOrganizacionIdIfOwner(@PathVariable Long id) {
         return ResponseEntity.of(
             Optional.ofNullable(usuarioService.getOrganizacionIdIfOwner(id))

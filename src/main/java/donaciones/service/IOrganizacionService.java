@@ -25,5 +25,6 @@ public interface IOrganizacionService {
 
     List<OrganizacionResponse> listarPorOwner(Long ownerId);
 
-
+    //obtener las donaciones asociadas a una organizacion
+    List<?> obtenerDonacionesPorOrganizacion(Long id);
 }

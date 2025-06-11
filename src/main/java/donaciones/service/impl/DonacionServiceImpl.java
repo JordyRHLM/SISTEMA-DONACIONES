@@ -153,5 +153,13 @@ public class DonacionServiceImpl implements DonacionService {
         );
         return total != null ? total : BigDecimal.ZERO;
     }
+
+    // listar donaciones por organizacion
+    @Override
+    public List<DonacionResponse> listarDonacionesPorOrganizacion(Long organizacionId) {
+        return donacionRepository.findByOrganizacionId(organizacionId).stream()
+                .map(this::mapToDonacionResponse)
+                .collect(Collectors.toList());
+    }
     
 }

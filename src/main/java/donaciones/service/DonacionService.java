@@ -24,4 +24,6 @@ public interface DonacionService {
     DonacionResponse crearDonacion(DonacionRequest request);
     //dashboard
     BigDecimal getTotalConfirmedDonations();
+    //listar donaciones por organizacion
+    List<DonacionResponse> listarDonacionesPorOrganizacion(Long organizacionId);
 }

@@ -79,4 +79,10 @@ public class OrganizacionController {
         return ResponseEntity.ok(organizacionService.listarPorOwner(ownerId));
     }
 
+      //obtener las donaciones asociadas a una organizacion
+    @GetMapping("/{id}/donaciones")
+    public ResponseEntity<List<?>> obtenerDonacionesPorOrganizacion(@PathVariable Long id) {
+        return ResponseEntity.ok(organizacionService.obtenerDonacionesPorOrganizacion(id));
+    }
+
 }
