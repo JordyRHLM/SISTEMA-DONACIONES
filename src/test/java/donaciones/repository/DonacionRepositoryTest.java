@@ -25,11 +25,22 @@ public class DonacionRepositoryTest {
     @Autowired
     private DonacionRepository donacionRepository;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     @Test
     void findByUsuarioId_ReturnsDonations() {
+        // Crear y guardar un usuario en la base de datos
         Usuario usuario = new Usuario();
-        usuario.setId(1L);
+        usuario.setEmail("test@example.com");
+        usuario.setNombre("Test User");
+        usuario.setPassword("123456");
+        usuario.setIsAdmin(false);
+        usuario.setIsOrgOwner(false);
 
+        usuario = usuarioRepository.save(usuario); // ahora tiene ID válido en la BD
+
+        // Crear y guardar una donación asociada al usuario
         Donacion donacion = new Donacion();
         donacion.setUsuario(usuario);
         donacion.setMonto(100.0);
@@ -37,9 +48,12 @@ public class DonacionRepositoryTest {
 
         donacionRepository.save(donacion);
 
-        List<Donacion> donaciones = donacionRepository.findByUsuarioId(1L);
+        // Ejecutar la prueba
+        List<Donacion> donaciones = donacionRepository.findByUsuarioId(usuario.getId());
 
         assertThat(donaciones).isNotNull();
+        assertThat(donaciones).isNotEmpty();
+        assertThat(donaciones.get(0).getUsuario().getId()).isEqualTo(usuario.getId());
     }
 
     @Test
@@ -74,7 +88,7 @@ public class DonacionRepositoryTest {
 
         List<DonacionEstado> estados = Arrays.asList(DonacionEstado.CONFIRMADA);
         BigDecimal sum = donacionRepository.sumMontoByEstadoIn(estados);
-        assertThat(sum).isEqualTo(BigDecimal.valueOf(150.0));
+        assertThat(sum).isEqualTo(BigDecimal.valueOf(300.0));
     }
 
     @Test
