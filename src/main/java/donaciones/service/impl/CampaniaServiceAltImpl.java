@@ -238,4 +238,13 @@ public class CampaniaServiceAltImpl implements CampaniaService {
             return 0;
         }
     }
+    //dashboard
+      @Override
+    public long countActiveCampaigns() {
+        return campaniaRepository.countByEstado(CampaniaEstado.ACTIVA);
+    }
+    @Override
+    public long countOrganizationsWithActiveCampaigns() {
+        return campaniaRepository.countDistinctOrganizacionByEstado(CampaniaEstado.ACTIVA);
+    }
 }

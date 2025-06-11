@@ -11,4 +11,8 @@ import java.util.List;
 public interface CampaniaRepository extends JpaRepository<Campania, Long> {
     List<Campania> findByOrganizacionId(Long organizacionId);
     List<Campania> findByEstado(CampaniaEstado estado);
+
+//Dashboard
+long countByEstado(CampaniaEstado estado);
+    long countDistinctOrganizacionByEstado(CampaniaEstado estado);
 }

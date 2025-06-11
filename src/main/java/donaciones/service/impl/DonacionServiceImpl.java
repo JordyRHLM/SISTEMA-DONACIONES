@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -143,6 +144,14 @@ public class DonacionServiceImpl implements DonacionService {
         return donacionRepository.findAll().stream()
                 .map(this::mapToDonacionResponse)
                 .collect(Collectors.toList());
+    }
+  //dashboard
+    @Override
+    public BigDecimal getTotalConfirmedDonations() {
+        BigDecimal total = donacionRepository.sumMontoByEstadoIn(
+            List.of(DonacionEstado.PENDIENTE, DonacionEstado.ENTREGADA)
+        );
+        return total != null ? total : BigDecimal.ZERO;
     }
     
 }

@@ -37,4 +37,6 @@ public interface ColaboracionRepository extends JpaRepository<Colaboracion, Cola
     void actualizarRol(@Param("usuarioId") Long usuarioId, 
                       @Param("campaniaId") Long campaniaId, 
                       @Param("rol") RolColaboracion rol);
-}
+    //dashboard
+    long count();
+ }

@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.math.BigDecimal;
 
 @Repository
 public interface DonacionRepository extends JpaRepository<Donacion, Long> {
@@ -33,6 +34,8 @@ public interface DonacionRepository extends JpaRepository<Donacion, Long> {
 
     @Query("SELECT d FROM Donacion d WHERE d.campania.id = :campaniaId AND d.estado IN :estados")
     List<Donacion> findByCampaniaIdAndEstadoIn(@Param("campaniaId") Long campaniaId,
-                                               @Param("estados") List<DonacionEstado> estados);
-
+                                                   @Param("estados") List<DonacionEstado> estados);
+    //dashboard
+    @Query("SELECT SUM(d.monto) FROM Donacion d WHERE d.estado IN :estados")
+        BigDecimal sumMontoByEstadoIn(@Param("estados") List<DonacionEstado> estados);
 }

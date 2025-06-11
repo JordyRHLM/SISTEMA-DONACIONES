@@ -14,6 +14,8 @@ public interface CampaniaService {
     CampaniaResponse actualizarCampania(Long id, CampaniaRequest campaniaRequest);
     void cambiarEstado(Long id, CampaniaEstado estado);
     void eliminarCampania(Long id);
-
     CampaniaRecaudacionResponse calcularRecaudacion(Long campaniaId);
+//dashboard
+    long countActiveCampaigns();
+    long countOrganizationsWithActiveCampaigns();
 }

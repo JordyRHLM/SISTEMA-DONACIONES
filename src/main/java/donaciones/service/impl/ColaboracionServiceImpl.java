@@ -133,5 +133,10 @@ public class ColaboracionServiceImpl implements ColaboracionService {
         
         return mapToResponse(actualizada);
     }
+//dashboard
+    @Override
+    public long countTotalVolunteers() {
+        return colaboracionRepository.count();
+    }
 
 }

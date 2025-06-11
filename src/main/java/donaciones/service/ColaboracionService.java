@@ -14,4 +14,6 @@ public interface ColaboracionService {
     boolean existeColaboracion(Long usuarioId, Long campaniaId);
     List<ColaboracionResponse> listarTodas();
     ColaboracionResponse actualizarColaboracion(Long usuarioId, Long campaniaId, RolColaboracion nuevoRol);
+//dashboard
+    long countTotalVolunteers();
 }

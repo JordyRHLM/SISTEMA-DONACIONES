@@ -2,6 +2,8 @@ package donaciones.service;
 
 import donaciones.dto.request.DonacionRequest;
 import donaciones.dto.response.DonacionResponse;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface DonacionService {
@@ -20,5 +22,6 @@ public interface DonacionService {
     List<DonacionResponse> listarTodasLasDonaciones();
     //crear donacion
     DonacionResponse crearDonacion(DonacionRequest request);
-
+    //dashboard
+    BigDecimal getTotalConfirmedDonations();
 }
