@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface DonacionService {
+    //cambiado a put
     DonacionResponse actualizarEstado(Long id, String estado);
     List<DonacionResponse> listarDonacionesPorUsuario(Long usuarioId);
     List<DonacionResponse> listarDonacionesPorCampania(Long campaniaId);

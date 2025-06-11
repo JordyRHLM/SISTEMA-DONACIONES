@@ -16,11 +16,13 @@ public interface DonacionRepository extends JpaRepository<Donacion, Long> {
     List<Donacion> findByUsuarioId(Long usuarioId);
     List<Donacion> findByCampaniaId(Long campaniaId);
     List<Donacion> findByOrganizacionId(Long organizacionId);
+
     //listar por organizacion
     List<Donacion> findByOrganizacionIdAndEstado(Long organizacionId, DonacionEstado estado);
     List<Donacion> findByOrganizacionIdAndEstado(Long organizacionId, String estado);
     //editar donacion por id
     Donacion findByIdAndOrganizacionId(Long id, Long organizacionId);
+    
     //asignar campania a donacion
     List<Donacion> findByCampaniaIdAndOrganizacionId(Long campaniaId, Long organizacionId);
     //eliminar donacion por id
@@ -38,4 +40,8 @@ public interface DonacionRepository extends JpaRepository<Donacion, Long> {
     //dashboard
     @Query("SELECT SUM(d.monto) FROM Donacion d WHERE d.estado IN :estados")
         BigDecimal sumMontoByEstadoIn(@Param("estados") List<DonacionEstado> estados);
+
+        //cambiar estado de donacion
+    @Query("UPDATE Donacion d SET d.estado = :estado WHERE d.id = :id")
+    void updateEstado(@Param("id") Long id, @Param("estado") DonacionEstado estado);
 }

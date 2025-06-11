@@ -49,7 +49,7 @@ public class DonacionServiceImpl implements DonacionService {
         Donacion savedDonacion = donacionRepository.save(donacion);
         return mapToDonacionResponse(savedDonacion);
     }
-
+//cambia a put                  
     @Override
     public DonacionResponse actualizarEstado(Long id, String estado) {
         Donacion donacion = donacionRepository.findById(id)
@@ -153,7 +153,6 @@ public class DonacionServiceImpl implements DonacionService {
         );
         return total != null ? total : BigDecimal.ZERO;
     }
-
     // listar donaciones por organizacion
     @Override
     public List<DonacionResponse> listarDonacionesPorOrganizacion(Long organizacionId) {
@@ -161,5 +160,4 @@ public class DonacionServiceImpl implements DonacionService {
                 .map(this::mapToDonacionResponse)
                 .collect(Collectors.toList());
     }
-    
 }

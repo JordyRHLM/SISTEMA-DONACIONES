@@ -51,8 +51,8 @@ public class DonacionController {
         return ResponseEntity.ok(response);
     }
 
-    // Actualizar estado de donación
-    @PatchMapping("/{id}/estado")
+    // Actualizar estado de donación cambiado a put
+    @PutMapping("/{id}/estado")
     public ResponseEntity<DonacionResponse> actualizarEstado(
             @PathVariable Long id,
             @RequestParam String estado) {
@@ -98,7 +98,6 @@ public class DonacionController {
         List<DonacionResponse> donaciones = donacionService.asignarCampaniaADonacion(campaniaId, organizacionId);
         return ResponseEntity.ok(donaciones);
     }
-
     //listar donaciones por organizacion
     @GetMapping("/organizacion/{organizacionId}/donaciones")
     public ResponseEntity<List<DonacionResponse>> listarDonacionesPorOrganizacion(@PathVariable Long organizacionId) {

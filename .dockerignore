@@ -1,0 +1,7 @@
+*.iml
+*.log
+.idea/
+.vscode/
+.git/
+.gitignore
+*.md
